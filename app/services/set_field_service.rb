@@ -3,8 +3,6 @@ class SetFieldService
     ActiveRecord::Base.transaction do
       case field_name
       when 'email'
-        return { error: 'You need to specify an email for this customer.' } if new_value.blank?
-
         new_value = new_value.strip.downcase
 
         return { error: "Can't save email. Invalid value: '#{new_value}'" } if EmailValidator.valid?(new_value) != true
@@ -14,8 +12,6 @@ class SetFieldService
 
         begin
           customer.save!
-        rescue ActiveRecord::RecordNotUnique
-          return { error: 'Email already exists.' }
         rescue StandardError => e
           return { error: e.to_s }
         end

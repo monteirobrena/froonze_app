@@ -2,11 +2,26 @@ describe SetFieldService do
   let(:set_field_service) { described_class }
 
   let(:first_name) { ' Rick ' }
-  let(:customer) { Customer.create({ first_name: first_name }) }
+  let(:customer) { Customer.create!({ first_name: first_name, email: "rick.grimes@twd.com" }) }
 
   describe '#call' do
     context 'create customer without service' do
       it { expect(customer.first_name).to eq(first_name) }
+
+      it 'should not create customer without an email' do
+        new_customer = Customer.create
+
+        expect(new_customer.errors).to_not be_empty
+        expect(new_customer.errors.messages[:email].first).to eql(I18n.t('activerecord.errors.models.customer.attributes.email.blank'))
+      end
+
+      it 'should not create customer with existent email' do
+        Customer.create(email: "maggie.greene@twd.com")
+        new_customer = Customer.create(email: "maggie.greene@twd.com")
+
+        expect(new_customer.errors).to_not be_empty
+        expect(new_customer.errors.messages[:email].first).to eql(I18n.t('activerecord.errors.models.customer.attributes.email.taken'))
+      end
     end
 
     context 'create customer with service' do
