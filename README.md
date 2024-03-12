@@ -1,1 +1,1 @@
-# froonze
+# Froonze App
