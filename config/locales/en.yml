@@ -8,3 +8,7 @@ en:
               blank: "You need to specify an email for this customer."
               taken: "Email already exists."
               invalid: "Can't save email. Invalid value: %{value}"
+      messages:
+        models:
+          customer:
+            unknown_field: "Unknown field: '%{value}'"

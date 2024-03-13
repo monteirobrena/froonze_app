@@ -7,6 +7,7 @@ describe SetFieldService do
   let(:title)      { " The Ones Who Live " }
   let(:role)       { " Former sheriff's deputy " }
   let(:score)      { "100" }
+  let(:unknown)    { " XXX " }
   let(:email)      { 'rick.grimes@twd.com' }
   let(:customer)   { Customer.build({ first_name: first_name, email: email }) }
 
@@ -69,6 +70,16 @@ describe SetFieldService do
       )
       expect(call_result).to eql({})
       expect(customer.score).to eq(score.to_i)
+    end
+
+    it 'should not change an unknown field' do
+      call_result = set_field_service.new.call(
+        customer: customer,
+        field_name: 'unknown',
+        new_value: unknown
+      )
+      expect(call_result).to_not eql({})
+      expect(call_result[:error]).to eql(I18n.t('activerecord.errors.messages.models.customer.unknown_field', value: 'unknown'))
     end
   end
 end
