@@ -1,12 +1,17 @@
 class SetFieldService
   def call(customer:, field_name:, new_value:)
-    ActiveRecord::Base.transaction do
-      return { error: I18n.t('activerecord.errors.messages.models.customer.unknown_field',
-                            value: field_name)
-             } unless Customer.attribute_names.include?(field_name)
+    return {
+      error: I18n.t('activerecord.errors.messages.models.customer.unknown_field', value: field_name)
+    } unless Customer.attribute_names.include?(field_name)
 
-      customer[field_name] = new_value.to_i if Customer.attribute_types[field_name].type == :integer
-      customer[field_name] = new_value.strip if Customer.attribute_types[field_name].type == :string
+    hash_method_by_type = {
+      integer: :to_i,
+      string: :strip
+    }
+
+    ActiveRecord::Base.transaction do
+      method_to_call = hash_method_by_type[Customer.attribute_types[field_name].type]
+      customer[field_name] = new_value.send(method_to_call)
 
       customer.save!
 
