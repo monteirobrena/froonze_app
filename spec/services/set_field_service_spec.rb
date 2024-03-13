@@ -22,6 +22,14 @@ describe SetFieldService do
         expect(new_customer.errors).to_not be_empty
         expect(new_customer.errors.messages[:email].first).to eql(I18n.t('activerecord.errors.models.customer.attributes.email.taken'))
       end
+
+      it 'should not create customer with invalid email' do
+        wrong_email = "maggie.greene.twd.com"
+        new_customer = Customer.create(email: wrong_email)
+
+        expect(new_customer.errors).to_not be_empty
+        expect(new_customer.errors.messages[:email].first).to eql(I18n.t('activerecord.errors.models.customer.attributes.email.invalid', value: wrong_email))
+      end
     end
 
     context 'create customer with service' do
